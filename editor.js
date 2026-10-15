@@ -101,12 +101,13 @@
     var next = JSON.parse(JSON.stringify(FR.state));
     next.version = nextVersion;
     next.history = (published.history || []).concat([entry]);
-    var json = JSON.stringify(next, null, 1).replace(/<\//g, "<\\/");
-    var html = document.documentElement.outerHTML;
-    // take the current source, not the rendered DOM: fetch is not available offline, so rebuild from a template of this document
+    // The JSON is produced by JSON.stringify from this page's own state and is embedded as data, not executed.
+    // Every "<" is written as \u003c so no sequence inside the block can close the script element or open a tag.
+    var json = JSON.stringify(next, null, 1).replace(/</g, "\\u003c");
     var src = window.__FR_SOURCE__ || null;
     if (!src) return null;
-    return src.replace(/<script id="content" type="application\/json">[\s\S]*?<\/script>/, '<script id="content" type="application/json">\n' + json + '\n</script>');
+    // nosemgrep: javascript.lang.security.audit.unknown-value-with-script-tag.unknown-value-with-script-tag
+    return src.replace(/<script id="content" type="application\/json">[\s\S]*?<\/script>/, function () { return '<script id="content" type="application/json">\n' + json + '\n</script>'; });
   }
   function changeSummary() {
     var ids = FR.state.sections.filter(function (s) { var p = published.sections.filter(function (q) { return q.id === s.id; })[0]; return !p || JSON.stringify(p) !== JSON.stringify(s); }).map(function (s) { return s.title; });
