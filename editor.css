@@ -1,0 +1,46 @@
+/* Editor, script drawer and publish dialog. Light only, same tokens as styles.css. */
+.version { font-size: 12px; color: var(--text-3); padding: 0 8px; font-variant-numeric: tabular-nums; }
+.editbar { position: sticky; top: var(--nav-h); z-index: 40; display: flex; gap: 10px; align-items: center; padding: 10px 24px; background: #fff7e0; border-bottom: 1px solid rgba(178, 80, 0, 0.18); font-size: 14px; color: var(--amber); }
+.editbar .spacer { flex: 1; }
+body.editing [data-field] { outline: 1px dashed transparent; outline-offset: 3px; border-radius: 4px; cursor: text; transition: outline-color 0.15s; }
+body.editing [data-field]:hover { outline-color: #b8c7da; }
+body.editing [data-field]:focus { outline: 2px solid var(--accent); background: rgba(10, 132, 255, 0.04); }
+body.editing .slide { position: relative; }
+.section-tools { position: absolute; left: 24px; top: calc(var(--nav-h) + 12px); display: none; gap: 6px; z-index: 5; }
+body.editing .section-tools { display: flex; }
+.section-tools button { font: 600 12px/1 inherit; padding: 7px 10px; border-radius: 8px; cursor: pointer; border: 1px solid var(--hair); background: #fff; color: var(--text); }
+.section-tools button:hover { background: var(--fill); }
+.changed-mark { display: none; position: absolute; left: 24px; top: calc(var(--nav-h) + 52px); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--amber); background: var(--amber-bg); padding: 4px 8px; border-radius: 999px; }
+.slide[data-changed="1"] .changed-mark { display: inline-block; }
+
+/* drawer */
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 92vw); z-index: 60; background: var(--card); box-shadow: -12px 0 40px rgba(0, 0, 0, 0.12); display: flex; flex-direction: column; }
+.drawer-head { display: flex; align-items: baseline; gap: 12px; padding: 18px 20px 12px; border-bottom: 1px solid var(--hair); }
+.drawer-head h2 { font-size: 18px; margin: 0; }
+.drawer-head .foot { flex: 1; }
+.drawer-head .icon-btn { font-size: 20px; line-height: 1; }
+.drawer-body { overflow: auto; padding: 8px 20px 24px; }
+.script-item { padding: 14px 0; border-bottom: 1px solid var(--hair); }
+.script-item:last-child { border-bottom: 0; }
+.script-item h3 { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-2); margin: 0 0 6px; display: flex; justify-content: space-between; }
+.script-item h3 a { color: var(--accent-text); text-decoration: none; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.script-item p { font-size: 15px; line-height: 1.5; white-space: pre-wrap; margin: 0; }
+.script-item.on { background: rgba(10, 132, 255, 0.05); margin: 0 -12px; padding-left: 12px; padding-right: 12px; border-radius: 10px; }
+body.drawer-open .inner { padding-right: min(460px, 50vw); }
+@media (max-width: 899px) { body.drawer-open .inner { padding-right: 16px; } }
+
+/* publish dialog */
+dialog.save { border: 0; border-radius: 18px; padding: 24px; width: min(520px, 92vw); box-shadow: 0 24px 80px rgba(0, 0, 0, 0.2); }
+dialog.save::backdrop { background: rgba(10, 12, 18, 0.55); }
+dialog.save h3 { margin: 0 0 16px; font-size: 20px; }
+dialog.save label { display: block; font-weight: 600; margin-bottom: 14px; font-size: 14px; }
+dialog.save input, dialog.save textarea { display: block; width: 100%; margin-top: 6px; padding: 10px 12px; font: inherit; font-weight: 400; border: 1px solid var(--hair); border-radius: 8px; }
+dialog.save .small { display: block; margin-top: 6px; color: var(--text-2); font-size: 13px; font-weight: 400; line-height: 1.4; }
+dialog.save .error { color: var(--red); font-size: 14px; }
+dialog.save menu { display: flex; justify-content: flex-end; gap: 10px; padding: 0; margin: 12px 0 0; }
+
+/* versions page */
+.versions { max-width: 760px; margin: 0 auto; padding: calc(var(--nav-h) + 40px) 24px 60px; }
+.versions table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.versions th, .versions td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--hair); vertical-align: top; }
+.versions th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2); }
