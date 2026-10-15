@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Film Room</title>
+<meta name="description" content="Film Room brings the game film strategy to the afternoon practice session. Three phones a coach sets up put every drill, every basket and every child on record.">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#F2F2F7">
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="editor.css">
+</head>
+<body>
+<a class="skip" href="#deck">Skip to content</a>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#hero" aria-label="Film Room, back to the start">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2.5 12h19M12 2.5v19M5.3 5.3c3.6 3.2 3.6 10.2 0 13.4M18.7 5.3c-3.6 3.2-3.6 10.2 0 13.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    <span>Film Room</span>
+  </a>
+  <nav class="links" id="links" aria-label="Sections"></nav>
+  <span class="spacer"></span>
+  <span class="version" id="version-label" title="Published version"></span>
+  <span class="counter" id="counter" aria-live="off"><span id="c-now">1</span> of <span id="c-all">4</span></span>
+  <button class="icon-btn" id="script-btn" type="button" aria-pressed="false" title="Script (S)" aria-label="Script drawer">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="icon-btn" id="edit-btn" type="button" aria-pressed="false" title="Edit (E)" aria-label="Edit mode">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 6.5l3 3" stroke="currentColor" stroke-width="1.8"/></svg>
+  </button>
+  <button class="icon-btn" id="present-btn" type="button" aria-pressed="false" title="Presenter mode (P)" aria-label="Presenter mode">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 16v4M8 20h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+  </button>
+  <div class="progress" aria-hidden="true"><div class="progress-bar" id="progress"></div></div>
+</header>
+
+<div class="editbar" id="editbar" hidden>
+  <span class="editbar-msg" id="edit-msg">Editing. Click any text to change it. Drafts save in this browser.</span>
+  <span class="spacer"></span>
+  <button type="button" class="btn btn-sm" id="revert-btn">Discard draft</button>
+  <button type="button" class="btn btn-sm" id="download-btn">Download copy</button>
+  <button type="button" class="btn btn-sm btn-primary" id="publish-btn">Publish</button>
+  <button type="button" class="btn btn-sm" id="done-btn">Done</button>
+</div>
+
+<main id="deck"></main>
+
+<aside class="drawer" id="drawer" hidden aria-label="Script">
+  <div class="drawer-head">
+    <h2>The script</h2>
+    <span class="foot" id="drawer-sub">What to say on each screen. Press S to hide.</span>
+    <button type="button" class="icon-btn" id="drawer-close" aria-label="Close script">&#215;</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</aside>
+
+<footer class="site-foot">
+  <div class="inner">
+    <p id="foot-provenance" data-field="footer.provenance"></p>
+    <p id="foot-footage" data-field="footer.footage"></p>
+    <p>Keys: arrows or space to move, P presenter, N notes, S script, E edit. <a href="versions/index.html" id="versions-link">Version history</a>.</p>
+  </div>
+</footer>
+
+<div class="presenter" id="presenter" hidden>
+  <div class="p-bar">
+    <button type="button" class="p-btn" id="p-prev" aria-label="Previous section">&#8249;</button>
+    <span class="p-count" id="p-count">1 / 4</span>
+    <button type="button" class="p-btn" id="p-next" aria-label="Next section">&#8250;</button>
+    <button type="button" class="p-btn p-text" id="p-notes" aria-pressed="false">Script</button>
+    <button type="button" class="p-btn p-text" id="p-exit">Exit</button>
+  </div>
+  <aside class="notes" id="notes" hidden><p class="notes-title" id="notes-title"></p><p id="notes-text"></p></aside>
+</div>
+
+<dialog class="save" id="publish-dialog">
+  <form method="dialog" id="publish-form">
+    <h3 id="publish-title">Publish</h3>
+    <label>Your name <input name="name" required autocomplete="name"></label>
+    <label>What changed, and why? <textarea name="note" rows="3" placeholder="e.g. Shortened the opening; moved the video above the footage."></textarea></label>
+    <label id="token-label">GitHub token <input name="token" type="password" autocomplete="off" spellcheck="false">
+      <span class="small">Needed once, then kept in this browser. Create a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">fine-grained token</a> with resource owner <b>trilogy-group</b>, only the <b>film-room-pitch</b> repository, and <b>Contents: Read and write</b>.</span>
+    </label>
+    <p class="small" id="publish-help">Publishes to the shared link, so everyone sees it. The version history records who changed what.</p>
+    <p class="error" id="publish-error" hidden></p>
+    <menu>
+      <button type="button" class="btn btn-sm" id="publish-cancel">Cancel</button>
+      <button type="submit" class="btn btn-sm btn-primary" id="publish-go">Publish</button>
+    </menu>
+  </form>
+</dialog>
+
+<!-- CONTENT: everything the page shows and says. Edit mode rewrites this block; Publish commits the file. -->
+<script id="content" type="application/json">
+{
+ "version": 4,
+ "history": [
+  {
+   "version": 1,
+   "by": "Samkit Shah",
+   "at": "2026-10-15T10:00:00Z",
+   "note": "First published version.",
+   "changed": []
+  },
+  {
+   "version": 2,
+   "by": "Samkit Shah",
+   "at": "2026-10-15T14:00:00Z",
+   "note": "Demo video v6: each view shown as described, coach versus child comparison with measured values, geometry first.",
+   "changed": [
+    "The demo"
+   ]
+  },
+  {
+   "version": 3,
+   "by": "Samkit",
+   "at": "2026-10-15T10:41:47.988Z",
+   "note": "Script",
+   "changed": [
+    "Open",
+    "On real footage",
+    "The demo",
+    "The ask"
+   ]
+  },
+  {
+   "version": 4,
+   "by": "Samkit Shah",
+   "at": "2026-10-15T17:00:00Z",
+   "note": "Demo video v7 (84 s): one comparison pair, admin in one line; demo script matched to it.",
+   "changed": [
+    "The demo"
+   ]
+  }
+ ],
+ "sections": [
+  {
+   "id": "hero",
+   "kind": "hero",
+   "title": "Open",
+   "eyebrow": "Film Room, for coach-run basketball programmes",
+   "headline": "Joe Liemandt employed the game film strategy for morning academics. We bring it to TSA's afternoon practice sessions.",
+   "quote": "\"Game film. People don't do this in academics for some reason.\"",
+   "attribution": "Joe Liemandt, co-founder of Alpha School, on how Alpha reviews every test. The Peter Attia Drive, episode 366, 18:40.",
+   "script": "Thank you for the time, and for the opportunity to introduce a concept that we have prototyped. Joe used the game film strategy for the morning academics at Alpha. And we believe we should bring it to TSA for their afternoon basketball practice sessions.\n"
+  },
+  {
+   "id": "footage",
+   "kind": "fullvideo",
+   "title": "On real footage",
+   "src": "assets/clips/drills.mp4",
+   "poster": "assets/clips/drills.jpg",
+   "pills": [
+    [
+     "green",
+     "Shooting, measured"
+    ],
+    [
+     "amber",
+     "Dribbling and drives, prototype"
+    ]
+   ],
+   "caption": "Adult club practice (Town Meeting TV, CC BY), youth AAU practice and an adult training session, with our layers drawn on them.",
+   "script": "Imagine a world where coach who does not have to keep tabs on twelve children and every rep they took. How well did they take it and Where exactly did it go wrong? Today that lives in the coach's head, week after week, all year. \nImagine a child who still cannot get the landing right and does not have to wait for the coach to show it again, because the reference rep is right there beside their own, with precise and instant feedback.\nImagine a parent who can watch their child get better, and share a clip with the family.\n\nAnd the head office able to look across every campus, every gym, every session, on one screen. The best reference reps from your best coaches, filed once in Fort Worth and reused in Houston on Monday. With nothing installed. No five or ten thousand dollar box above one rim that only watches shooting, when dribbling and finishing are where most of the afternoon goes."
+  },
+  {
+   "id": "how",
+   "kind": "demo",
+   "title": "The demo",
+   "eyebrow": "How we do it",
+   "headline": "Three phones. The coach decides. Geometry does the rest.",
+   "src": "assets/demo.mp4",
+   "webm": "assets/demo.webm",
+   "poster": "assets/demo-poster.jpg",
+   "caption": "Narrated demo, about 80 seconds. The coach's rep beside a child's, measured.",
+   "script": "We do not have to imagine it. This is exactly what we have prototyped.\nYou're probably wondering how do we do it?\n\nNo heavy equipment. No sensors. Just three phones. Two at the corners on one side of the gym, one on the far sideline, each on a tripod. Where two views cross, we know where a body or a ball is, in three dimensions.\n\nThe whole afternoon goes on record. Every drill, every basket, every child. Shooting, dribbling, drives and finishes.\n\nThe coach records the rep once, and it becomes the reference for that drill. From then on, every child's rep is measured against it. Every child's rep is set beside the coach's. Time from gather to release: coach 0.7 seconds, child 0.6. Knee bend at the dip: coach 140 degrees, child 105. Arc of the ball at the rim: 65 degrees against 50. From that, one line for the child: hold your finish a beat longer. Not a grade. One thing to try.\n\nAfter practice, the coach gets a montage to review, each clip with the camera's call. And one view of the whole group: how each child performed, week to week.\n\nThe parent sees the coach's line for the week, attendance, and a clip to keep.\n\nThe admin sees every campus on one screen."
+  },
+  {
+   "id": "ask",
+   "kind": "ask",
+   "title": "The ask",
+   "eyebrow": "The ask",
+   "headline": "A working prototype. We can tailor it to your campus needs.",
+   "lead": "In the hands of your coaches and students, or a tool you make available to partner gyms. Your gyms, your drills, your coaches' rubric. The first step is one practice.",
+   "script": "If this sounds something that you would would like to put in your coaches, athletes and parent's hands, let's discuss on how we can tailor it for your campus."
+  }
+ ],
+ "footer": {
+  "provenance": "Every number in the demo traces to an experiment report. Labels marked agent-judged were made by an AI agent from stills and checked by the author.",
+  "footage": "Adult club practice: Town Meeting TV, CC BY. Youth practice clips: Danny Cooper Blue Chips AAU, and a youth coaching video by Breakthrough Basketball, standard YouTube licence, shown for an internal review only. Four-camera fusion: EPFL training footage, research use, internal only. The app screens carry simulated practice data with made-up names."
+ }
+}
+</script>
+
+<script src="app.js" defer></script>
+<script src="editor.js" defer></script>
+</body>
+</html>
